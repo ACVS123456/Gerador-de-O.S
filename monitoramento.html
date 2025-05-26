@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Monitoramento de O.S.</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            align-items: flex-start;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #0d47a1;
+            margin-bottom: 20px;
+        }
+        form label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #0d47a1;
+        }
+        input[type="text"],
+        input[type="datetime-local"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1.5px solid #cfd8dc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="datetime-local"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #0d47a1;
+            outline: none;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        button {
+            margin-top: 25px;
+            background-color: #0d47a1;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 5px 15px rgba(253, 254, 255, 0.4);
+            width: 100%;
+        }
+        button:hover {
+            background-color: #084296;
+        }
+        #clear-records {
+            background-color: #b71c1c;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(183, 28, 28, 0.6);
+        }
+        #records-list {
+            margin-top: 30px;
+            max-height: 350px;
+            overflow-y: auto;
+            border-top: 2px solid #0d47a1;
+            padding-top: 15px;
+        }
+        .record {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .record-header {
+            font-weight: 700;
+            color: #0d47a1;
+            margin-bottom: 8px;
+        }
+        .record-dates {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .record-notes {
+            white-space: pre-wrap;
+            margin-bottom: 10px;
+            color: #222;
+        }
+        .record-photos {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .record-photos img {
+            height: 80px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            object-fit: cover;
+            cursor: zoom-in;
+            transition: transform 0.3s;
+        }
+        .record-photos img:hover {
+            transform: scale(1.1);
+        }
+        .record-buttons {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+        .record-buttons button {
+            width: auto;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            box-shadow: none;
+            border-radius: 4px;
+            opacity: 0.85;
+            transition: opacity 0.3s;
+        }
+        .record-buttons button:hover {
+            opacity: 1;
+        }
+        .edit-btn {
+            background-color: #1976d2;
+        }
+        .delete-btn {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de O.S.</h1>
+      <a href="login_O.S/login.html" onclick="localStorage.removeItem('os_monitor_logged_user')" style="display: inline-block; margin-bottom: 20px; color: #feffff; text-decoration: none; font-weight: bold; background-color: #0d47a1; padding: 10px 20px; border-radius: 6px;">Sair</a>
+       <form id="os-form">
+            <h2>Informações da Ordem de Serviço</h2>
+            <label for="os-number">Número da O.S.:</label>
+            <input type="text" id="os-number" required />
+
+            <label for="creation-date">Data de Criação:</label>
+            <input type="datetime-local" id="creation-date" required />
+
+            <label for="client-name">Cliente:</label>
+            <input type="text" id="client-name" required />
+
+            <label for="client-address">Endereço do Cliente:</label>
+            <input type="text" id="client-address" required />
+
+            <label for="problem-description">Descrição do Problema/Solicitação:</label>
+            <textarea id="problem-description" rows="4" required></textarea>
+
+            <label for="service-type">Tipo de Serviço:</label>
+            <select id="service-type" required>
+                <option value="manutencao">Manutenção</option>
+                <option value="reparo">Reparo</option>
+                <option value="instalacao">Instalação</option>
+            </select>
+
+            <label for="priority">Prioridade da O.S.:</label>
+            <select id="priority" required>
+                <option value="alta">Alta</option>
+                <option value="media">Média</option>
+                <option value="baixa">Baixa</option>
+            </select>
+
+            <h2>Informações do Executor</h2>
+            <label for="technician-name">Nome do Técnico:</label>
+            <input type="text" id="technician-name" required />
+
+            <label for="technician-code">Código do Técnico:</label>
+            <input type="text" id="technician-code" required />
+
+            <label for="technician-department">Departamento do Técnico:</label>
+            <input type="text" id="technician-department" required />
+
+            <label for="technician-position">Cargo do Técnico:</label>
+            <input type="text" id="technician-position" required />
+
+            <label for="technician-contact">Número de Contato do Técnico:</label>
+            <input type="text" id="technician-contact" required />
+
+            <h2>Descrição da Tarefa Executada</h2>
+            <label for="task-details">Detalhamento da Tarefa Realizada:</label>
+            <textarea id="task-details" rows="4" required></textarea>
+
+            <label for="materials-used">Materiais e Equipamentos Utilizados:</label>
+            <textarea id="materials-used" rows="4" required></textarea>
+
+            <label for="execution-time">Tempo de Execução:</label>
+            <input type="text" id="execution-time" required />
+
+            <label for="task-observations">Observações e Considerações Importantes:</label>
+            <textarea id="task-observations" rows="4"></textarea>
+
+            <h2>Resultados da Execução</h2>
+            <label for="task-conclusion">Conclusão da Tarefa:</label>
+            <select id="task-conclusion" required>
+                <option value="sim">Sim</option>
+                <option value="nao">Não</option>
+            </select>
+
+            <label for="result-observations">Observações sobre o Resultado da Execução:</label>
+            <textarea id="result-observations" rows="4"></textarea>
+
+            <label for="next-steps">Próximos Passos (se houver):</label>
+            <textarea id="next-steps" rows="4"></textarea>
+
+            <h2>Assinaturas</h2>
+            <label for="executor-signature">Assinatura do Executor:</label>
+            <input type="text" id="executor-signature" required />
+
+            <label for="client-signature">Assinatura do Cliente (se for o caso):</label>
+            <input type="text" id="client-signature" />
+
+            <label for="photos">Fotos (pode anexar múltiplas):</label>
+            <input type="file" id="photos" accept="image/*" multiple />
+
+            <button type="C:\Users\Antonio\OneDrive\Área de Trabalho\Monitoramento de OS\Mon_O.S\login_O.S\login.html" id="submit-button">Salvar Registro</button>
+        </form>
+
+        <button id="clear-records" title="Remover todos os registros">Limpar todos os registros</button>
+
+        <section id="records-section">
+            <h2>Registros de Trabalho</h2>
+            <div id="records-list">
+                <!-- Registros aparecerão aqui -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const form = document.getElementById('os-form');
+        const recordsList = document.getElementById('records-list');
+        const clearBtn = document.getElementById('clear-records');
+        const submitBtn = document.getElementById('submit-button');
+
+        let editIndex = -1;  // índice do registro sendo editado, -1 significa modo novo registro
+
+        function getRecords() {
+            const records = localStorage.getItem('osRecords');
+            return records ? JSON.parse(records) : [];
+        }
+
+        function saveRecords(records) {
+            localStorage.setItem('osRecords', JSON.stringify(records));
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = err => reject(err);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, function(m) {
+                return ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                })[m];
+            });
+        }
+
+        // Preencher formulário com dados para edição
+        async function fillForm(record) {
+            document.getElementById('os-number').value = record.osNumber;
+            document.getElementById('creation-date').value = record.creationDate;
+            document.getElementById('client-name').value = record.clientName;
+            document.getElementById('client-address').value = record.clientAddress;
+            document.getElementById('problem-description').value = record.problemDescription;
+            document.getElementById('service-type').value = record.serviceType;
+            document.getElementById('priority').value = record.priority;
+            document.getElementById('technician-name').value = record.technicianName;
+            document.getElementById('technician-code').value = record.technicianCode;
+            document.getElementById('technician-department').value = record.technicianDepartment;
+            document.getElementById('technician-position').value = record.technicianPosition;
+            document.getElementById('technician-contact').value = record.technicianContact;
+            document.getElementById('task-details').value = record.taskDetails;
+            document.getElementById('materials-used').value = record.materialsUsed;
+            document.getElementById('execution-time').value = record.executionTime;
+            document.getElementById('task-observations').value = record.taskObservations;
+            document.getElementById('task-conclusion').value = record.taskConclusion;
+            document.getElementById('result-observations').value = record.resultObservations;
+            document.getElementById('next-steps').value = record.nextSteps;
+            document.getElementById('executor-signature').value = record.executorSignature;
+            document.getElementById('client-signature').value = record.clientSignature;
+
+            // Photos cannot be set directly into file input for security reasons.
+            // So we show alert to inform user they must re-upload if necessary
+            if (record.photos && record.photos.length) {
+                alert("Este registro possui fotos anexadas. Ao editar, para atualizar as fotos você precisa anexá-las novamente.");
+            }
+        }
+
+        function clearForm() {
+            form.reset();
+            editIndex = -1;
+            submitBtn.textContent = 'Salvar Registro';
+        }
+
+        function displayRecords() {
+            recordsList.innerHTML = '';
+            const records = getRecords();
+            if (records.length === 0) {
+                recordsList.innerHTML = '<p>Nenhum registro salvo.</p>';
+                return;
+            }
+
+            records.forEach((record, index) => {
+                const recordEl = document.createElement('div');
+                recordEl.className = 'record';
+
+                recordEl.innerHTML = `
+                    <div class="record-header">Registro #${index + 1} - O.S. ${escapeHtml(record.osNumber)}</div>
+                    <div class="record-dates"><strong>Data de Criação:</strong> ${new Date(record.creationDate).toLocaleString()}</div>
+                    <div class="record-notes">
+                        <strong>Cliente:</strong> ${escapeHtml(record.clientName)}<br>
+                        <strong>Endereço:</strong> ${escapeHtml(record.clientAddress)}<br>
+                        <strong>Descrição do Problema:</strong> ${escapeHtml(record.problemDescription)}<br>
+                        <strong>Tipo de Serviço:</strong> ${escapeHtml(record.serviceType)}<br>
+                        <strong>Prioridade:</strong> ${escapeHtml(record.priority)}
+                    </div>
+                    <div class="record-notes">
+                        <strong>Técnico:</strong> ${escapeHtml(record.technicianName)} (Código: ${escapeHtml(record.technicianCode)})<br>
+                        <strong>Departamento:</strong> ${escapeHtml(record.technicianDepartment)}<br>
+                        <strong>Cargo:</strong> ${escapeHtml(record.technicianPosition)}<br>
+                        <strong>Contato:</strong> ${escapeHtml(record.technicianContact)}
+                    </div>
+                    <div class="record-notes">
+                        <strong>Detalhamento:</strong> ${escapeHtml(record.taskDetails)}<br>
+                        <strong>Materiais e Equip.:</strong> ${escapeHtml(record.materialsUsed)}<br>
+                        <strong>Tempo Execução:</strong> ${escapeHtml(record.executionTime)}<br>
+                        <strong>Observações:</strong> ${escapeHtml(record.taskObservations)}
+                    </div>
+                    <div class="record-notes">
+                        <strong>Conclusão:</strong> ${escapeHtml(record.taskConclusion)}<br>
+                        <strong>Observações Resultados:</strong> ${escapeHtml(record.resultObservations)}<br>
+                        <strong>Próximos Passos:</strong> ${escapeHtml(record.nextSteps)}
+                    </div>
+                    <div class="record-notes">
+                        <strong>Assinatura Executor:</strong> ${escapeHtml(record.executorSignature)}<br>
+                        <strong>Assinatura Cliente:</strong> ${escapeHtml(record.clientSignature || '-')}
+                    </div>
+                    <div class="record-photos"></div>
+                    <div class="record-buttons">
+                        <button class="edit-btn" data-index="${index}">Editar</button>
+                        <button class="delete-btn" data-index="${index}">Excluir</button>
+                    </div>
+                `;
+
+                const photosEl = recordEl.querySelector('.record-photos');
+                if (record.photos && record.photos.length > 0) {
+                    record.photos.forEach(photo => {
+                        const img = document.createElement('img');
+                        img.src = photo;
+                        img.alt = 'Foto do registro';
+                        photosEl.appendChild(img);
+                    });
+                } else {
+                    photosEl.innerHTML = '<i>Sem fotos anexadas</i>';
+                }
+
+                recordsList.appendChild(recordEl);
+            });
+
+            // Adicionar listeners para botões editar/excluir
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const idx = parseInt(button.dataset.index, 10);
+                    if (confirm('Deseja realmente excluir este registro?')) {
+                        let records = getRecords();
+                        records.splice(idx, 1);
+                        saveRecords(records);
+                        displayRecords();
+                        if (editIndex === idx) {
+                            clearForm();
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const idx = parseInt(button.dataset.index, 10);
+                    const records = getRecords();
+                    editIndex = idx;
+                    await fillForm(records[idx]);
+                    submitBtn.textContent = 'Atualizar Registro';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const osNumber = document.getElementById('os-number').value.trim();
+            const creationDate = document.getElementById('creation-date').value;
+            const clientName = document.getElementById('client-name').value.trim();
+            const clientAddress = document.getElementById('client-address').value.trim();
+            const problemDescription = document.getElementById('problem-description').value.trim();
+            const serviceType = document.getElementById('service-type').value;
+            const priority = document.getElementById('priority').value;
+            const technicianName = document.getElementById('technician-name').value.trim();
+            const technicianCode = document.getElementById('technician-code').value.trim();
+            const technicianDepartment = document.getElementById('technician-department').value.trim();
+            const technicianPosition = document.getElementById('technician-position').value.trim();
+            const technicianContact = document.getElementById('technician-contact').value.trim();
+            const taskDetails = document.getElementById('task-details').value.trim();
+            const materialsUsed = document.getElementById('materials-used').value.trim();
+            const executionTime = document.getElementById('execution-time').value.trim();
+            const taskObservations = document.getElementById('task-observations').value.trim();
+            const taskConclusion = document.getElementById('task-conclusion').value;
+            const resultObservations = document.getElementById('result-observations').value.trim();
+            const nextSteps = document.getElementById('next-steps').value.trim();
+            const executorSignature = document.getElementById('executor-signature').value.trim();
+            const clientSignature = document.getElementById('client-signature').value.trim();
+            const photosInput = document.getElementById('photos');
+            const photos = [];
+
+            // Ler fotos anexadas (ou deixar antigas se edição sem trocar)
+            if (photosInput.files.length > 0) {
+                for (let i = 0; i < photosInput.files.length; i++) {
+                    const file = photosInput.files[i];
+                    try {
+                        const base64 = await fileToBase64(file);
+                        photos.push(base64);
+                    } catch (err) {
+                        console.error('Erro ao ler a foto:', err);
+                    }
+                }
+            } else if (editIndex !== -1) {
+                // Se edição e usuário não atualizou fotos, manter as antigas
+                const records = getRecords();
+                if (records[editIndex]) {
+                    photos.push(...records[editIndex].photos);
+                }
+            }
+
+            const newRecord = {
+                osNumber,
+                creationDate,
+                clientName,
+                clientAddress,
+                problemDescription,
+                serviceType,
+                priority,
+                technicianName,
+                technicianCode,
+                technicianDepartment,
+                technicianPosition,
+                technicianContact,
+                taskDetails,
+                materialsUsed,
+                executionTime,
+                taskObservations,
+                taskConclusion,
+                resultObservations,
+                nextSteps,
+                executorSignature,
+                clientSignature,
+                photos
+            };
+
+            const records = getRecords();
+
+            if (editIndex === -1) {
+                records.push(newRecord);
+            } else {
+                records[editIndex] = newRecord;
+            }
+
+            saveRecords(records);
+            clearForm();
+            displayRecords();
+        });
+
+        clearBtn.addEventListener('click', function() {
+            if (confirm('Deseja realmente apagar todos os registros?')) {
+                localStorage.removeItem('osRecords');
+                clearForm();
+                displayRecords();
+            }
+        });
+
+        displayRecords();
+    </script>
+</body>
+</html>
