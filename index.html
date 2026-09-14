@@ -1,0 +1,840 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Monitoramento de O.S. — Login</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      margin: 0;
+      min-height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 380px;
+
+      background: rgba(255, 255, 255, 0.12);
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      padding: 30px;
+
+      border-radius: 16px;
+
+      border: 1px solid rgba(255, 255, 255, 0.18);
+
+      box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.25);
+
+      animation: aparecer 0.4s ease;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 8px;
+      font-size: 1.7rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #ddd;
+      font-size: 0.9rem;
+      margin-bottom: 25px;
+    }
+
+    /* ABAS */
+
+    .tab-buttons {
+      display: flex;
+      margin-bottom: 20px;
+
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .tab-button {
+      flex: 1;
+
+      padding: 12px;
+
+      border: none;
+      border-radius: 0;
+
+      background: transparent;
+
+      color: #ccc;
+
+      font-size: 1rem;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      margin: 0;
+
+      border-bottom: 3px solid transparent;
+
+      transition: 0.3s;
+    }
+
+    .tab-button:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .tab-button.active {
+      color: #fff;
+
+      border-bottom: 3px solid #fff;
+    }
+
+    /* FORMULÁRIO */
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-top: 12px;
+      margin-bottom: 5px;
+
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+
+      padding: 13px;
+
+      border-radius: 8px;
+
+      border: 1px solid transparent;
+
+      outline: none;
+
+      font-size: 1rem;
+
+      background: rgba(255,255,255,0.95);
+
+      color: #222;
+
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #fff;
+
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,0.2);
+    }
+
+    .main-button {
+      margin-top: 22px;
+
+      padding: 13px;
+
+      border: none;
+
+      border-radius: 8px;
+
+      background: #4c51bf;
+
+      color: white;
+
+      font-size: 1rem;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition: 0.3s;
+    }
+
+    .main-button:hover {
+      background: #3c429f;
+
+      transform: translateY(-1px);
+    }
+
+    .main-button:active {
+      transform: translateY(0);
+    }
+
+    /* MENSAGENS */
+
+    .info-text {
+      margin-top: 15px;
+
+      font-size: 0.85rem;
+
+      color: #ddd;
+
+      text-align: center;
+
+      line-height: 1.4;
+    }
+
+    #error-message {
+      min-height: 22px;
+
+      font-weight: 600;
+    }
+
+    .success {
+      color: #7CFF9B !important;
+    }
+
+    .error {
+      color: #ff9b9b !important;
+    }
+
+    /* PAINÉIS */
+
+    .hidden {
+      display: none;
+    }
+
+    /* RODAPÉ */
+
+    .footer {
+      margin-top: 25px;
+
+      text-align: center;
+
+      font-size: 0.75rem;
+
+      color: #ccc;
+
+      opacity: 0.8;
+    }
+
+    /* RESPONSIVO */
+
+    @media (max-width: 420px) {
+
+      .container {
+        padding: 24px 20px;
+      }
+
+      h1 {
+        font-size: 1.45rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Monitoramento de O.S.</h1>
+
+    <div class="subtitle">
+      Sistema de Monitoramento de Ordens de Serviço
+    </div>
+
+    <!-- ABAS -->
+
+    <div class="tab-buttons">
+
+      <button
+        type="button"
+        id="tab-login"
+        class="tab-button active">
+        Login
+      </button>
+
+      <button
+        type="button"
+        id="tab-register"
+        class="tab-button">
+        Cadastro
+      </button>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- LOGIN -->
+    <!-- ========================= -->
+
+    <div id="login-panel">
+
+      <form id="login-form">
+
+        <label for="login-username">
+          Usuário
+        </label>
+
+        <input
+          type="text"
+          id="login-username"
+          name="username"
+          placeholder="Digite seu usuário"
+          autocomplete="username"
+          required
+        >
+
+        <label for="login-password">
+          Senha
+        </label>
+
+        <input
+          type="password"
+          id="login-password"
+          name="password"
+          placeholder="Digite sua senha"
+          autocomplete="current-password"
+          required
+        >
+
+        <button
+          type="submit"
+          class="main-button">
+          Entrar
+        </button>
+
+      </form>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- CADASTRO -->
+    <!-- ========================= -->
+
+    <div id="register-panel" class="hidden">
+
+      <form id="register-form">
+
+        <label for="register-username">
+          Novo usuário
+        </label>
+
+        <input
+          type="text"
+          id="register-username"
+          name="username"
+          placeholder="Crie um usuário"
+          autocomplete="username"
+          required
+        >
+
+        <label for="register-password">
+          Senha
+        </label>
+
+        <input
+          type="password"
+          id="register-password"
+          name="password"
+          placeholder="Crie uma senha"
+          autocomplete="new-password"
+          required
+        >
+
+        <label for="register-password-confirm">
+          Confirmar senha
+        </label>
+
+        <input
+          type="password"
+          id="register-password-confirm"
+          name="password-confirm"
+          placeholder="Digite a senha novamente"
+          autocomplete="new-password"
+          required
+        >
+
+        <button
+          type="submit"
+          class="main-button">
+          Cadastrar usuário
+        </button>
+
+      </form>
+
+      <p class="info-text">
+        Máximo de 2 usuários cadastrados.
+      </p>
+
+    </div>
+
+    <!-- MENSAGEM -->
+
+    <p
+      class="info-text"
+      id="error-message">
+    </p>
+
+    <div class="footer">
+      Monitoramento de O.S. © 2026
+    </div>
+
+  </div>
+
+
+  <script>
+
+    /* =====================================================
+       ELEMENTOS
+    ===================================================== */
+
+    const tabLoginBtn =
+      document.getElementById("tab-login");
+
+    const tabRegisterBtn =
+      document.getElementById("tab-register");
+
+    const loginPanel =
+      document.getElementById("login-panel");
+
+    const registerPanel =
+      document.getElementById("register-panel");
+
+    const errorMsg =
+      document.getElementById("error-message");
+
+    const loginForm =
+      document.getElementById("login-form");
+
+    const registerForm =
+      document.getElementById("register-form");
+
+
+    /* =====================================================
+       BANCO DE USUÁRIOS
+    ===================================================== */
+
+    const STORAGE_USERS =
+      "os_monitor_users";
+
+    const STORAGE_LOGGED =
+      "os_monitor_logged_user";
+
+
+    function getUsers() {
+
+      try {
+
+        const data =
+          localStorage.getItem(STORAGE_USERS);
+
+        if (!data) {
+          return [];
+        }
+
+        const users = JSON.parse(data);
+
+        return Array.isArray(users)
+          ? users
+          : [];
+
+      } catch (error) {
+
+        console.error(
+          "Erro ao carregar usuários:",
+          error
+        );
+
+        return [];
+      }
+    }
+
+
+    function saveUsers(users) {
+
+      localStorage.setItem(
+        STORAGE_USERS,
+        JSON.stringify(users)
+      );
+
+    }
+
+
+    /* =====================================================
+       MENSAGENS
+    ===================================================== */
+
+    function showMessage(
+      message,
+      type = "error"
+    ) {
+
+      errorMsg.textContent = message;
+
+      errorMsg.className =
+        "info-text " + type;
+
+    }
+
+
+    function clearMessage() {
+
+      errorMsg.textContent = "";
+
+      errorMsg.className =
+        "info-text";
+
+    }
+
+
+    /* =====================================================
+       TROCAR ABA
+    ===================================================== */
+
+    tabLoginBtn.addEventListener(
+      "click",
+      () => {
+
+        tabLoginBtn.classList.add("active");
+
+        tabRegisterBtn.classList.remove("active");
+
+        loginPanel.classList.remove("hidden");
+
+        registerPanel.classList.add("hidden");
+
+        clearMessage();
+
+      }
+    );
+
+
+    tabRegisterBtn.addEventListener(
+      "click",
+      () => {
+
+        tabRegisterBtn.classList.add("active");
+
+        tabLoginBtn.classList.remove("active");
+
+        registerPanel.classList.remove("hidden");
+
+        loginPanel.classList.add("hidden");
+
+        clearMessage();
+
+      }
+    );
+
+
+    /* =====================================================
+       CADASTRO
+    ===================================================== */
+
+    registerForm.addEventListener(
+      "submit",
+      function(event) {
+
+        event.preventDefault();
+
+        clearMessage();
+
+
+        const username =
+          document
+            .getElementById("register-username")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("register-password")
+            .value;
+
+        const passwordConfirm =
+          document
+            .getElementById("register-password-confirm")
+            .value;
+
+
+        /* CAMPOS */
+
+        if (
+          !username ||
+          !password ||
+          !passwordConfirm
+        ) {
+
+          showMessage(
+            "Por favor, preencha todos os campos."
+          );
+
+          return;
+        }
+
+
+        /* TAMANHO DO USUÁRIO */
+
+        if (username.length < 3) {
+
+          showMessage(
+            "O usuário deve possuir pelo menos 3 caracteres."
+          );
+
+          return;
+        }
+
+
+        /* SENHA */
+
+        if (password.length < 4) {
+
+          showMessage(
+            "A senha deve possuir pelo menos 4 caracteres."
+          );
+
+          return;
+        }
+
+
+        /* CONFIRMAÇÃO */
+
+        if (password !== passwordConfirm) {
+
+          showMessage(
+            "As senhas não coincidem."
+          );
+
+          return;
+        }
+
+
+        const users = getUsers();
+
+
+        /* LIMITE */
+
+        if (users.length >= 2) {
+
+          showMessage(
+            "Limite de 2 usuários cadastrados atingido."
+          );
+
+          return;
+        }
+
+
+        /* DUPLICIDADE */
+
+        const exists =
+          users.some(
+            user =>
+              user.username.toLowerCase() ===
+              username.toLowerCase()
+          );
+
+
+        if (exists) {
+
+          showMessage(
+            "Nome de usuário já existe."
+          );
+
+          return;
+        }
+
+
+        /* CADASTRAR */
+
+        users.push({
+
+          username: username,
+
+          password: password
+
+        });
+
+
+        saveUsers(users);
+
+
+        /* LIMPAR */
+
+        registerForm.reset();
+
+
+        showMessage(
+          "Usuário cadastrado com sucesso. Faça login.",
+          "success"
+        );
+
+
+        /* VOLTAR PARA LOGIN */
+
+        setTimeout(
+          () => {
+
+            tabLoginBtn.click();
+
+            document
+              .getElementById("login-username")
+              .value = username;
+
+          },
+          1000
+        );
+
+      }
+    );
+
+
+    /* =====================================================
+       LOGIN
+    ===================================================== */
+
+    loginForm.addEventListener(
+      "submit",
+      function(event) {
+
+        event.preventDefault();
+
+        clearMessage();
+
+
+        const username =
+          document
+            .getElementById("login-username")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("login-password")
+            .value;
+
+
+        if (!username || !password) {
+
+          showMessage(
+            "Informe usuário e senha."
+          );
+
+          return;
+        }
+
+
+        const users = getUsers();
+
+
+        const user =
+          users.find(
+            item =>
+              item.username.toLowerCase() ===
+              username.toLowerCase()
+          );
+
+
+        /* USUÁRIO NÃO ENCONTRADO */
+
+        if (!user) {
+
+          showMessage(
+            "Usuário não encontrado."
+          );
+
+          return;
+        }
+
+
+        /* SENHA INCORRETA */
+
+        if (user.password !== password) {
+
+          showMessage(
+            "Senha incorreta."
+          );
+
+          return;
+        }
+
+
+        /* =================================================
+           LOGIN APROVADO
+        ================================================= */
+
+        localStorage.setItem(
+          STORAGE_LOGGED,
+          user.username
+        );
+
+
+        showMessage(
+          "Login realizado. Abrindo sistema...",
+          "success"
+        );
+
+
+        /* REDIRECIONAMENTO */
+
+        setTimeout(
+          () => {
+
+            window.location.href =
+              "../monitoramento.html";
+
+          },
+          500
+        );
+
+      }
+    );
+
+
+    /* =====================================================
+       VERIFICAR SE JÁ ESTÁ LOGADO
+    ===================================================== */
+
+    const loggedUser =
+      localStorage.getItem(STORAGE_LOGGED);
+
+
+    /*
+      Se quiser impedir que o usuário
+      veja novamente a tela de login
+      quando já estiver autenticado,
+      mantenha este bloco ativo.
+    */
+
+    if (loggedUser) {
+
+      /*
+      window.location.href =
+        "../monitoramento.html";
+      */
+
+    }
+
+  </script>
+
+</body>
+</html>
